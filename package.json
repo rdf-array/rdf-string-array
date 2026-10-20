@@ -9,7 +9,7 @@
     "quad",
     "triple"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "typings": "index",
   "repository": "git@github.com:rubensworks/rdf-string.js.git",
   "author": "Ruben Taelman <rubensworks@gmail.com>",
@@ -23,12 +23,9 @@
   "homepage": "https://github.com/rubensworks/rdf-string.js#readme",
   "license": "MIT",
   "files": [
-    "lib/**/*.d.ts",
-    "lib/**/*.js.map",
-    "lib/**/*.js",
-    "index.d.ts",
-    "index.js.map",
-    "index.js"
+    "dist/**/*.d.ts",
+    "dist/**/*.js",
+    "dist/**/*.js.map"
   ],
   "dependencies": {
     "rdf-data-factory": "github:rdf-array/rdf-data-factory-array#rdf-sequences"
@@ -77,5 +74,6 @@
   "resolutions": {
     "@rdfjs/types": "github:rdf-array/types-array#rdf-sequences",
     "rdf-data-factory": "github:rdf-array/rdf-data-factory-array#rdf-sequences"
-  }
+  },
+  "types": "dist/index.d.ts"
 }
