@@ -1,3 +1,18 @@
+<img src=".github/rdf-array-logo.png" alt="[rdf-string]" width="96" align="right">
+
+# rdf-string-array: rdf-string for RDF-
+
+**RDF-** fork of [rdf-string](https://github.com/rubensworks/rdf-string.js) for a data model whose
+fifth kind of term is the **sequence** (`termType: "Sequence"`, see
+[rdf-data-factory-array](https://github.com/rdf-array/rdf-data-factory-array)): `termToString` spells a
+sequence as `(<http://ex.org/a> "a b" "1"^^http://www.w3.org/2001/XMLSchema#integer _:b ?v)`, IRIs
+between angle brackets and nested sequences and quads as they are, and `stringToTerm` reads it back
+through a quote- and nesting-aware term splitter that the quoted-triple branch now uses too. Part of
+the [comunica-array](https://github.com/rdf-array/comunica-array) stack, whose doc/rdf-array.md lists
+the sibling forks.
+
+---
+
 # RDF String
 
 [![Build status](https://github.com/rubensworks/rdf-string.js/workflows/CI/badge.svg)](https://github.com/rubensworks/rdf-string.js/actions?query=workflow%3ACI)

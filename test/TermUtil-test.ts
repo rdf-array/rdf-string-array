@@ -498,4 +498,103 @@ describe('TermUtil', () => {
       });
     });
   });
+
+  describe('RDF- sequences', () => {
+    const xsdInteger = FACTORY.namedNode('http://www.w3.org/2001/XMLSchema#integer');
+    const mixed = FACTORY.sequence([
+      FACTORY.namedNode('http://example.org/a'),
+      FACTORY.literal('a b'),
+      FACTORY.literal('1', xsdInteger),
+      FACTORY.literal('x', 'en'),
+      FACTORY.blankNode('b'),
+      FACTORY.variable('v'),
+    ]);
+    const mixedString = '(<http://example.org/a> "a b" "1"^^http://www.w3.org/2001/XMLSchema#integer' +
+      ' "x"@en _:b ?v)';
+    const nested = FACTORY.sequence([
+      FACTORY.sequence([ FACTORY.namedNode('http://example.org/a') ]),
+      FACTORY.sequence([]),
+    ]);
+    const nestedString = '((<http://example.org/a>) ())';
+    const withQuad = FACTORY.sequence([
+      FACTORY.quad(
+        FACTORY.namedNode('http://example.org/s'),
+        FACTORY.namedNode('http://example.org/p'),
+        FACTORY.literal('o'),
+      ),
+    ]);
+    const withQuadString = '(<<http://example.org/s http://example.org/p "o">>)';
+
+    describe('#termToString', () => {
+      it('should convert the empty sequence', () => {
+        expect(TermUtil.termToString(FACTORY.sequence([]))).toEqual('()');
+      });
+
+      it('should convert a sequence of mixed terms, with IRIs between angle brackets', () => {
+        expect(TermUtil.termToString(mixed)).toEqual(mixedString);
+      });
+
+      it('should convert nested sequences', () => {
+        expect(TermUtil.termToString(nested)).toEqual(nestedString);
+      });
+
+      it('should convert a sequence holding a quad', () => {
+        expect(TermUtil.termToString(withQuad)).toEqual(withQuadString);
+      });
+    });
+
+    describe('#stringToTerm', () => {
+      it('should parse the empty sequence', () => {
+        expect(FACTORY.sequence([]).equals(TermUtil.stringToTerm('()'))).toBe(true);
+        expect(FACTORY.sequence([]).equals(TermUtil.stringToTerm('( )'))).toBe(true);
+      });
+
+      it('should parse a sequence of mixed terms', () => {
+        expect(mixed.equals(TermUtil.stringToTerm(mixedString))).toBe(true);
+      });
+
+      it('should accept bare IRIs and extra spaces', () => {
+        expect(FACTORY.sequence([ FACTORY.namedNode('http://example.org/a'), FACTORY.namedNode('http://example.org/b') ])
+          .equals(TermUtil.stringToTerm('( http://example.org/a   <http://example.org/b> )'))).toBe(true);
+      });
+
+      it('should keep spaces and parentheses inside literals', () => {
+        expect(FACTORY.sequence([ FACTORY.literal('a ( b'), FACTORY.literal('c)') ])
+          .equals(TermUtil.stringToTerm('("a ( b" "c)")'))).toBe(true);
+      });
+
+      it('should parse nested sequences', () => {
+        expect(nested.equals(TermUtil.stringToTerm(nestedString))).toBe(true);
+      });
+
+      it('should parse a sequence holding a quad', () => {
+        expect(withQuad.equals(TermUtil.stringToTerm(withQuadString))).toBe(true);
+      });
+
+      it('should round-trip what termToString produces', () => {
+        for (const term of [ mixed, nested, withQuad ]) {
+          expect(TermUtil.termToString(TermUtil.stringToTerm(TermUtil.termToString(term))))
+            .toEqual(TermUtil.termToString(term));
+        }
+      });
+
+      it('should throw on an unterminated sequence', () => {
+        expect(() => TermUtil.stringToTerm('(<http://example.org/a>')).toThrow('Sequence syntax error');
+        expect(() => TermUtil.stringToTerm('((<http://example.org/a>)')).toThrow('without closing parenthesis');
+        expect(() => TermUtil.stringToTerm('(<http://example.org/a>))')).toThrow('without opening parenthesis');
+        expect(() => TermUtil.stringToTerm('("a)')).toThrow('without closing quote');
+      });
+
+      it('should throw on unbalanced angle brackets', () => {
+        expect(() => TermUtil.stringToTerm('(<http://example.org/a)')).toThrow('without closing tag');
+        expect(() => TermUtil.stringToTerm('(http://example.org/a>)')).toThrow('without opening tag');
+      });
+
+      it('should throw for a data factory without sequence()', () => {
+        const dataFactory: RDF.DataFactory = <any> { defaultGraph: () => FACTORY.defaultGraph() };
+        expect(() => TermUtil.stringToTerm('()', dataFactory))
+          .toThrow(`Missing 'sequence()' method on the given DataFactory`);
+      });
+    });
+  });
 });

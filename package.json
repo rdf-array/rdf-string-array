@@ -31,7 +31,7 @@
     "index.js"
   ],
   "dependencies": {
-    "rdf-data-factory": "^2.0.0"
+    "rdf-data-factory": "github:rdf-array/rdf-data-factory-array#rdf-sequences"
   },
   "pre-commit": [
     "build",
@@ -73,5 +73,9 @@
     "prepare": "npm run build",
     "version": "manual-git-changelog onversion"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "resolutions": {
+    "@rdfjs/types": "github:rdf-array/types-array#rdf-sequences",
+    "rdf-data-factory": "github:rdf-array/rdf-data-factory-array#rdf-sequences"
+  }
 }
